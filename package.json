@@ -1,0 +1,31 @@
+{
+  "name": "fullstack_osio4",
+  "version": "1.0.0",
+  "description": "Blogi",
+  "main": "index.js",
+  "scripts": {
+    "start": "node index.js",
+    "watch": "nodemon index.js",
+    "lint": "eslint .",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/hakkamar/FullStack_Osio4.git"
+  },
+  "author": "Marko Hakkarainen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/hakkamar/FullStack_Osio4/issues"
+  },
+  "homepage": "https://github.com/hakkamar/FullStack_Osio4#readme",
+  "devDependencies": {
+    "eslint": "^5.4.0",
+    "nodemon": "^1.18.3"
+  },
+  "dependencies": {
+    "cors": "^2.8.4",
+    "express": "^4.16.3",
+    "mongoose": "^5.2.9"
+  }
+}
