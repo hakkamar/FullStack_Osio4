@@ -74,9 +74,44 @@ const mostBlogs = (blogs) => {
   return { author: kirjailija, blogs: kpl }
 }
 
+const mostLikes = (blogs) => {
+  if ( blogs.length === 0 ) {
+    return null
+  }
+
+  // haetaan eka hlö käsittelyn pohjaksi
+  var kirjailija = blogs[0].author
+  let liket = blogs[0].likes
+  for (let i = 1; i < blogs.length; i++) {
+    if (kirjailija === blogs[i].author) {
+      liket += blogs[i].likes
+    }
+  }
+
+  // Käydään taulukko läpi...
+  for (let i = 1; i < blogs.length; i++) {
+    var kasittelyssa = blogs[i].author
+    if (kasittelyssa !== kirjailija) {
+      var liket2 = 0
+      for (let j = 0; j < blogs.length; j++) {
+        if (kasittelyssa === blogs[j].author) {
+          liket2+= blogs[j].likes
+        }
+      }
+      if (liket2 > liket) {
+        liket = liket2
+        kirjailija = kasittelyssa
+      }
+    }
+  }
+
+  return  { author: kirjailija, likes: liket }
+}
+
 module.exports = {
   dummy,
   totalLikes,
   favoriteBlog,
-  mostBlogs
+  mostBlogs,
+  mostLikes
 }
