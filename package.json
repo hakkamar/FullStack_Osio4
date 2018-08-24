@@ -7,7 +7,10 @@
     "start": "node index.js",
     "watch": "nodemon index.js",
     "lint": "eslint .",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "jest --verbose"
+  },
+  "jest": {
+    "testEnvironment": "node"
   },
   "repository": {
     "type": "git",
@@ -21,6 +24,7 @@
   "homepage": "https://github.com/hakkamar/FullStack_Osio4#readme",
   "devDependencies": {
     "eslint": "^5.4.0",
+    "jest": "^23.5.0",
     "nodemon": "^1.18.3"
   },
   "dependencies": {
