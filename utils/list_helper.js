@@ -18,7 +18,7 @@ const formatBlog = (blog) => {
   }
 }
 
-const favoriteBlog =(blogs) => {
+const favoriteBlog = (blogs) => {
   if ( blogs.length === 0 ) {
     return null
   }
@@ -34,8 +34,49 @@ const favoriteBlog =(blogs) => {
   return formatBlog(blogs[i])
 }
 
+const mostBlogs = (blogs) => {
+  if ( blogs.length === 0 ) {
+    return null
+  }
+
+  // haetaan pohjat
+  var taulukko = []
+  for (let i = 0; i < blogs.length; i++) {
+    taulukko.push(blogs[i].author)
+  }
+  taulukko.sort
+
+  // eka hlö pois ja käsittelyn pohjaksi
+  var kirjailija = taulukko.shift()
+  let kpl = 1
+  for (let i = 0; i < taulukko.length; i++) {
+    if (kirjailija === taulukko[i]) {
+      kpl++
+    }
+  }
+
+  // Käydään taulukko läpi...
+  for (let i = 0; i < taulukko.length; i++) {
+    var kasittelyssa = taulukko[i]
+    if (kasittelyssa !== kirjailija) {
+      var kpl2 = 0
+      for (let i = 0; i < taulukko.length; i++) {
+        if (kasittelyssa === taulukko[i]) {
+          kpl2++
+        }
+      }
+      if (kpl2 > kpl) {
+        kpl = kpl2
+        kirjailija = kasittelyssa
+      }
+    }
+  }
+  return { author: kirjailija, blogs: kpl }
+}
+
 module.exports = {
   dummy,
   totalLikes,
-  favoriteBlog
+  favoriteBlog,
+  mostBlogs
 }
