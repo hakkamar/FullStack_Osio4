@@ -4,10 +4,11 @@
   "description": "Blogi",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js",
-    "watch": "nodemon index.js",
-    "lint": "eslint .",
-    "test": "jest --verbose"
+    "start": "cross-env NODE_ENV=production  node index.js",
+    "watch": "cross-env NODE_ENV=development nodemon index.js",
+    "test": "cross-env NODE_ENV=test jest --verbose",
+    "testi": "cross-env NODE_ENV=test node index.js",
+    "lint": "eslint ."
   },
   "jest": {
     "testEnvironment": "node"
@@ -23,9 +24,11 @@
   },
   "homepage": "https://github.com/hakkamar/FullStack_Osio4#readme",
   "devDependencies": {
+    "cross-env": "^5.2.0",
     "eslint": "^5.4.0",
     "jest": "^23.5.0",
-    "nodemon": "^1.18.3"
+    "nodemon": "^1.18.3",
+    "supertest": "^3.1.0"
   },
   "dependencies": {
     "cors": "^2.8.4",
