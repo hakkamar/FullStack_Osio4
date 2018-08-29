@@ -188,6 +188,50 @@ describe('Tests about Blogs', () => {
     expect(response.body.length).toBe(initialBlogs.length + 2)
     expect(titles).toContain('Lisätty Osa 3 testi Blogi')
   })
+  test('a blog withtout title can NOT be added ', async () => {
+    const newBlog = {
+      author: 'Testi Henkilö 4',
+      url: 'www.testia4.fi',
+      likes: 1
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api
+      .get('/api/blogs')
+
+    const authors = response.body.map(r => r.author)
+
+    // + 2 koska jo aikaisemmin lisättiin kaksi onnistunutta.
+    expect(response.body.length).toBe(initialBlogs.length + 2)
+    expect(authors).not.toContain('Testi Henkilö 4')
+  })
+  test('a blog withtout url can NOT be added ', async () => {
+    const newBlog = {
+      title: 'Yritetään lisätä Osa 4 testi Blogi',        
+      author: 'Testi Henkilö 5',
+      likes: 1
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api
+      .get('/api/blogs')
+
+    const authors = response.body.map(r => r.author)
+
+    // + 2 koska jo aikaisemmin lisättiin kaksi onnistunutta.
+    expect(response.body.length).toBe(initialBlogs.length + 2)
+    expect(authors).not.toContain('Testi Henkilö 5')
+  })
 })
 
 afterAll(() => {
