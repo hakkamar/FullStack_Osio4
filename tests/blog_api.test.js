@@ -166,6 +166,28 @@ describe('Tests about Blogs', () => {
     expect(titles).not.toContain('HTTP DELETE poistaa resurssin')
     expect(blogsAfterDelete.body.length).toBe(blogsAtBeginningOfOperation.body.length - 1)
   })
+  test('a blog withtout likes can be added ', async () => {
+    const newBlog = {
+      title: 'Lisätty Osa 3 testi Blogi',
+      author: 'Testi Henkilö 3',
+      url: 'www.testia.fi'
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api
+      .get('/api/blogs')
+
+    const titles = response.body.map(r => r.title)
+
+    // + 2 koska jo aikaisemmin lisättiin yksi.
+    expect(response.body.length).toBe(initialBlogs.length + 2)
+    expect(titles).toContain('Lisätty Osa 3 testi Blogi')
+  })
 })
 
 afterAll(() => {
