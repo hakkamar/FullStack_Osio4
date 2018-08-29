@@ -81,8 +81,90 @@ describe('Tests about Blogs', () => {
     const response = await api
       .get('/api/blogs')
 
-    const names = response.body.map(r => r.name)
-    expect(names).toContainEqual('React patterns')
+    const titles = response.body.map(r => r.title)
+    expect(titles).toContainEqual('React patterns')
+  })
+  test('a valid blog can be added ', async () => {
+    const newBlog = {
+      title: 'Lisätty testi Blogi',
+      author: 'Testi Henkilö',
+      url: 'www.testi.fi',
+      likes: 2
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const response = await api
+      .get('/api/blogs')
+
+    const titles = response.body.map(r => r.title)
+
+    expect(response.body.length).toBe(initialBlogs.length + 1)
+    expect(titles).toContain('Lisätty testi Blogi')
+  })
+  test('Blog without content is not added ', async () => {
+    const newBlog = {
+      likes: 2
+    }
+
+    const intialBlogs = await api
+      .get('/api/blogs')
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(400)
+
+    const response = await api
+      .get('/api/blogs')
+
+    expect(response.body.length).toBe(intialBlogs.body.length)
+  })
+  test('a specific blog can be viewed', async () => {
+    const resultAll = await api
+      .get('/api/blogs')
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const aBlogFromAll = resultAll.body[0]
+
+    const resultBlog = await api
+      .get(`/api/blogs/${aBlogFromAll.id}`)
+
+    const blogObject = resultBlog.body
+
+    expect(blogObject).toEqual(aBlogFromAll)
+  })
+  test('a blog can be deleted', async () => {
+    const newBlog = {
+      title: 'HTTP DELETE poistaa resurssin',
+      author: 'Testi Henkilö2',
+      url: 'www.testi2.fi',
+      likes: 0
+    }
+
+    const addedBlog = await api
+      .post('/api/blogs')
+      .send(newBlog)
+
+    const blogsAtBeginningOfOperation = await api
+      .get('/api/blogs')
+
+    await api
+      .delete(`/api/blogs/${addedBlog.body.id}`)
+      .expect(204)
+
+    const blogsAfterDelete = await api
+      .get('/api/blogs')
+
+    const titles = blogsAfterDelete.body.map(r => r.title)
+
+    expect(titles).not.toContain('HTTP DELETE poistaa resurssin')
+    expect(blogsAfterDelete.body.length).toBe(blogsAtBeginningOfOperation.body.length - 1)
   })
 })
 
