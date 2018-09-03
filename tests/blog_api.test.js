@@ -2,7 +2,7 @@ const supertest = require('supertest')
 const { app, server } = require('../index')
 const api = supertest(app)
 const Blog = require('../models/blog')
-const { initialBlogs, format, nonExistingId, blogsInDb } = require('../utils/blog_api_helper')
+const { initialBlogs, nonExistingId, blogsInDb } = require('../utils/blog_api_helper')
 
 describe('First tests about Blogs', () => {
 
@@ -44,14 +44,14 @@ describe('First tests about Blogs', () => {
   test('404 returned by GET /api/blogs/:id with nonexisting valid id', async () => {
     const validNonexistingId = await nonExistingId()
 
-    const response = await api
+    await api
       .get(`/api/blogs/${validNonexistingId}`)
       .expect(404)
   })
   test('400 is returned by GET /api/blogs/:id with invalid id', async () => {
     const invalidId = '5a3d5da59070081a82a3445'
 
-    const response = await api
+    await api
       .get(`/api/blogs/${invalidId}`)
       .expect(400)
   })
@@ -200,6 +200,78 @@ describe('Third tests about Blogs', () => {
     expect(titlesBefore).toContain(addedBlog.body.title)
     expect(titlesAfter).not.toContain(addedBlog.body.title)
     expect(blogsAfterOperation.length).toBe(blogsAtStart.length - 1)
+  })
+  test('PUT /api/blogs/:id succeeds with proper statuscode', async () => {
+    const blogsInDatabase = await blogsInDb()
+    const aBlog = blogsInDatabase[0]
+    const updatedLikes = aBlog.likes + 2
+    const updatedBlog = {
+      id: aBlog.id,
+      title: aBlog.title,
+      author: aBlog.author,
+      url: aBlog.url,
+      likes: updatedLikes
+    }
+
+    const response = await api
+      .put(`/api/blogs/${aBlog.id}`)
+      .send(updatedBlog)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    expect(response.body.likes).toEqual(updatedLikes)
+  })
+  test('PUT /api/blogs/:id fails with proper statuscode if likes < 0', async () => {
+    const blogsInDatabase = await blogsInDb()
+    const aBlog = blogsInDatabase[0]
+    const updatedLikes = -5
+    const updatedBlog = {
+      id: aBlog.id,
+      title: aBlog.title,
+      author: aBlog.author,
+      url: aBlog.url,
+      likes: updatedLikes
+    }
+
+    await api
+      .put(`/api/blogs/${aBlog.id}`)
+      .send(updatedBlog)
+      .expect(400)
+      .expect('Content-Type', /application\/json/)
+
+    const aBlogAfter = blogsInDatabase[0]
+    expect(aBlogAfter.likes).not.toEqual(updatedLikes)
+    expect(aBlogAfter.likes).toBe(aBlog.likes)
+  })
+  test('PUT /api/blogs/:id fails with proper statuscode if nonExistingId', async () => {
+    const blogsInDatabaseBefore = await blogsInDb()
+    const validNonexistingId = await nonExistingId()
+    const updatedBlog = {
+      likes: 100
+    }
+
+    await api
+      .put(`/api/blogs/${validNonexistingId}`)
+      .send(updatedBlog)
+      .expect(404)
+
+    const blogsInDatabaseAfter = await blogsInDb()
+    expect(blogsInDatabaseBefore.length).toBe(blogsInDatabaseAfter.length)
+  })
+  test('PUT /api/blogs/:id fails with proper statuscode if id=XXXXXXXXXXXXX', async () => {
+    const blogsInDatabaseBefore = await blogsInDb()
+    const validNonexistingId = 'XXXXXXXXXXXXX'
+    const updatedBlog = {
+      likes: 100
+    }
+
+    await api
+      .put(`/api/blogs/${validNonexistingId}`)
+      .send(updatedBlog)
+      .expect(400)
+
+    const blogsInDatabaseAfter = await blogsInDb()
+    expect(blogsInDatabaseBefore.length).toBe(blogsInDatabaseAfter.length)
   })
 })
 

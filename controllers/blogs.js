@@ -56,4 +56,30 @@ blogsRouter.post('/', async (request, response) => {
   }
 })
 
+blogsRouter.put('/:id', async (request, response) => {
+  try {
+    const body = request.body
+    if (body.likes < 0) {
+      return response.status(400).json({ error: 'nagative value' })
+    }
+    const blog = await Blog.findById(request.params.id)
+
+    if ( blog ) {
+      const updatedBlog = ({
+        id: blog.id,
+        title: blog.title,
+        author: blog.author,
+        url: blog.url,
+        likes: body.likes
+      })
+      await Blog.findByIdAndUpdate(request.params.id, updatedBlog, { new: true })
+      response.json(Blog.format(updatedBlog))
+    } else {
+      response.status(404).end()
+    }
+  } catch (exception) {
+    console.log(exception)
+    response.status(400).send({ error: 'malformatted id' })
+  }
+})
 module.exports = blogsRouter
