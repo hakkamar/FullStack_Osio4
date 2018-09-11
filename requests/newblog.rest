@@ -1,0 +1,11 @@
+POST http://localhost:3001/api/blogs
+Content-Type: application/json
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imhha2thbWFyIiwiaWQiOiI1Yjk3NzRlMjE1ZTcwYTFhZTA1ZTBjODMiLCJpYXQiOjE1MzY2NTI1Mzd9.MLrDSrD7soDpKcIwNAE_AB2VV5b65jkbHbV3xUx_kBA
+
+{
+	"title": "Testiä taas ja taas",
+	"author": "Marko Hakkarainen",
+	"url": "https://www.hakkarainen.fi",
+	"likes": 61,
+	"userId": "5b97653e78f5a936dce6dcb6"
+}

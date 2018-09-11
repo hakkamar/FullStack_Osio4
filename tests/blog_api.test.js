@@ -4,6 +4,9 @@ const api = supertest(app)
 const Blog = require('../models/blog')
 const User = require('../models/user')
 const { initialBlogs, nonExistingId, blogsInDb, usersInDb  } = require('../utils/blog_api_helper')
+//const jwt = require('jsonwebtoken')
+//const loginRouter = require('./controllers/login')
+//app.use('/api/login', loginRouter)
 
 describe('First tests about Blogs', () => {
 
@@ -363,6 +366,66 @@ describe.only('when there is initially one user at db', async () => {
     const usersAfterOperation = await usersInDb()
     expect(usersAfterOperation.length).toBe(usersBeforeOperation.length)
   })
+  test('POST /api/users succeeds XXXXXXXXXXXXXXXXXXXXX', async () => {
+    const usersBeforeOperation = await usersInDb()
+
+    const newUser = {
+      username: 'hakkamar',
+      name: 'Hakkis',
+      password: 'salainen',
+      adult: true
+    }
+
+    // luodaan uusi käyttäjä
+    await api
+      .post('/api/users')
+      .send(newUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const usersAfterOperation = await usersInDb()
+    expect(usersAfterOperation.length).toBe(usersBeforeOperation.length + 1)
+    const uudenKayttajanIidee = usersAfterOperation[usersAfterOperation.length-1].id
+    // loggaudutaan uudella käyttäjällä
+
+    const response = await api
+      .post('/api/login')
+      .send(newUser)
+      .expect(200)
+      .expect('Content-Type', /application\/json/)
+
+    const token = response.body.token
+    const tokeni = 'berer' + token
+
+    // lisätään käyttäjälle blog
+    const blogsAtStart = await blogsInDb()
+
+    const config = {
+      headers: { 'Authorization': tokeni }
+    }
+
+    const newBlog = {
+      title: 'Lisätty testi Blogi käyttäjälle',
+      author: 'Hakkis Testaa',
+      url: 'http://www.testi.fi',
+      likes: 2,
+      userId: uudenKayttajanIidee
+    }
+
+    await api
+      .post('/api/blogs')
+      .send(newBlog)
+      .expect(201)
+      .expect('Content-Type', /application\/json/)
+
+    const blogsAfterOperation = await blogsInDb()
+
+    expect(blogsAfterOperation.length).toBe(blogsAtStart.length + 1)
+    const titles = blogsAfterOperation.map(r => r.title)
+    expect(titles).toContain('Lisätty testi Blogi käyttäjälle')
+
+  })
+
 })
 
 afterAll(() => {
