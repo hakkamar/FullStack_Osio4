@@ -39,9 +39,34 @@ blogsRouter.get('/:id', async (request, response) => {
 
 blogsRouter.delete('/:id', async (request, response) => {
   try {
-    await Blog.findByIdAndRemove(request.params.id)
-    response.status(204).end()
+    const token = getTokenFrom(request)
+    const decodedToken = jwt.verify(token, process.env.SECRET)
+
+    if (!token || !decodedToken.id) {
+      return response.status(401).json({ error: 'token missing or invalid' })
+    }
+
+    const blog = await Blog.findById(request.params.id)
+    // jos blogia ei löydy, niin ei ole poistettavaakaan
+    if (blog === undefined) {
+      return response.status(204).end()
+    }
+    // mikäli blogilla ei ole useria, niin ei se myöskään ole poistaja...
+    if (blog.user === undefined) {
+      return response.status(401).send({ error: 'vain omia voi poistaa' })
+    }
+
+    const user = await User.findById(decodedToken.id)
+
+    // poistetaan, jos on oma, muuten ilmoitetaan virheenä asiasta
+    if ( user._id.toString() === blog.user.toString() ) {
+      await Blog.findByIdAndRemove(request.params.id)
+      response.status(204).end()
+    } else {
+      response.status(401).send({ error: 'vain omia voi poistaa' })
+    }
   } catch ( exception ) {
+    console.log('hupsis...')
     console.log(exception)
     response.status(400).send({ error: 'malformatted id' })
   }

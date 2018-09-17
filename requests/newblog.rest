@@ -1,11 +1,11 @@
 POST http://localhost:3001/api/blogs
 Content-Type: application/json
-Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imhha2thbWFyIiwiaWQiOiI1Yjk3NzRlMjE1ZTcwYTFhZTA1ZTBjODMiLCJpYXQiOjE1MzY2NTI1Mzd9.MLrDSrD7soDpKcIwNAE_AB2VV5b65jkbHbV3xUx_kBA
+Authorization: bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6Imhha2thbWFyIiwiaWQiOiI1YjlmNjA4NTdkODc5ODQwMjg5ZTgzNjQiLCJpYXQiOjE1MzcxNzE2NDF9.CenAdq7bXb3nOJ8UfGQYD6Cbf5M9yXHqdZqW-wo1Imo
 
 {
-	"title": "Testiä taas ja taas",
-	"author": "Marko Hakkarainen",
-	"url": "https://www.hakkarainen.fi",
-	"likes": 61,
-	"userId": "5b97653e78f5a936dce6dcb6"
+	"title": "Testiä - again...",
+	"author": "Marko A.K. Hakkarainen",
+	"url": "https://www.MAKhakkarainen.fi",
+	"likes": 6,
+	"userId": "5b9f60857d879840289e8364"
 }
